@@ -1,4 +1,5 @@
 class Process:
+    #Metodo construtor da classe process
     def __init__(self, process):
         self.tempo_init = process[0]
         self.prioridade = process[1]
@@ -23,22 +24,22 @@ class ProcessManager:
     ultimoPID = 0
 
     def escalona_processo_geral(self):
-        """
-        Escalona os processos nas filas de usuario ou fila de tempo real
-        """
+    
+        #A seguir é realizado o escalonamento dos processos nas filas de usuario ou fila de tempo real
 
         if(not(self.fila_principal)):
             return False
 
         processo_topo = self.fila_principal[0]
 
-        # distribui os processos ao longo das filas de usuario e tempo real
+        # distribui os processos ao longo das filas de usuario ou tempo real
         if ((processo_topo['prioridade'] == 0) and (len(self.fila_tempo_real) < 1000)):
             self.fila_principal.pop(0)
             self.fila_tempo_real.append(processo_topo)
 
         elif (len(self.fila_usuario) < 1000):
             # alocou para a fila de usuario
+            # Para na função escalona_processo_usuario ser decidido em qual prioridade o processo vai ser rodado
             self.fila_principal.pop(0)
             self.fila_usuario.append(processo_topo)
         else:
@@ -47,9 +48,9 @@ class ProcessManager:
         return True
 
     def escalona_processo_usuario(self):
-        """
-        Escalona os processos de usuario nas filas de prioridades
-        """
+
+        # E realizado o escolanomento de processos de usuarios nas filas de prioridades
+
         if(not(self.fila_usuario)):
             return False
 
@@ -70,13 +71,13 @@ class ProcessManager:
 
         return True
     def gera_pid(self):
-        ''' Gera um PID e calcula o proximo
-        '''
+        # Essa função gera um PID  e já calcula o próximo
+   
         self.ultimoPID += 1
         return self.ultimoPID - 1
     def acabou(self):
-        ''' Retorna se ainda tem processo para ser processado ou Nao
-        '''
+        # Irá retornar se ainda tem um processo para ser realizado ou não
+        
         return (not(self.fila_usuario) and not(self.fila_principal) and not(self.fila_tempo_real)
         and not(self.prioridade_1) and not(self.prioridade_2) and not(self.prioridade_3)
         and not(self.em_execucao))

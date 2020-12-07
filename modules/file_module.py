@@ -1,7 +1,6 @@
 class File:
-    '''
-    Arquivo no disco
-    '''
+    #Definindo o arquivo no disco
+
     def __init__(self, arquivo, criador=None):
         self.nome = arquivo[0]
         self.bloco_inicio = int(arquivo[1])
@@ -9,9 +8,8 @@ class File:
         self.criador = criador
 
 class FileOperation:
-    '''
-    Operacoes em arquivos
-    '''
+
+    #Nessa função inicial definimos as operações nos arquivos
     def __init__(self, operacao):
         self.PID = int(operacao[0])
         self.opcode = int(operacao[1])
@@ -22,9 +20,9 @@ class FileOperation:
             self.tamanho = None
 
 class FileManager:
-    '''
-    Gerencia arquivos e operacoes dos processos sobre eles
-    '''
+
+    # Essa classe gerencia os arquivos e as operações dos processos
+    
     qtd_blocos = 0
     qtd_segmentos = 0
     arquivos = []
@@ -35,17 +33,16 @@ class FileManager:
     log = []
 
     def inicia_disco(self):
-        '''
-        Inicializa o disco com os arquivos descritos no arquivo de entrada
-        '''
-        self.disco = [0 for i in range(self.qtd_blocos)]
+
+        #E inicializado o disco com os arquivos que foram passados na entrada do arquivo
+        
+        self.disco = [0 for i in range(self.qtd_blocos)] 
         for arq in self.arquivos:
             self.disco[arq['bloco_inicio']:arq['bloco_inicio'] + arq['tamanho']] = arq['tamanho']*[arq['nome']]
 
     def cria_arquivo(self, nome, tamanho, criador):
-        '''
-        Cria novo arquivo no disco
-        '''
+        #função que cria um novo arquivo no disco
+        
         offset = None
         disponiveis = 0
 
@@ -63,6 +60,7 @@ class FileManager:
             bloco = self.disco[i]
             if(bloco == 0):
                 disponiveis += 1
+                # se o espaço disponivel for igual ao tamanho, irá ser criado o arquivo
                 if(disponiveis == tamanho):
                     offset = i - disponiveis + 1
                     self.disco[offset:offset+disponiveis] = tamanho * [nome]
@@ -78,15 +76,14 @@ class FileManager:
                 disponiveis = 0
         self.log.append({
             "status": 'Falha',
-            "mensagem": 'O processo {} nao criou o arquivo {} (Sem espaco livre)'.format(
+            "mensagem": 'O processo {} nao criou o arquivo {} pelo motivo de nao ter espaco livre)'.format(
             criador, nome
             )
         })
 
     def deleta_arquivo(self, arquivo):
-        '''
-        Remove arquivo do disco
-        '''
+        #Remove o arquivo do disco
+
         self.disco[arquivo['bloco_inicio']:arquivo['bloco_inicio'] + arquivo['tamanho']] =  arquivo['tamanho']*[0]
 
     def opera_processo(self, processo):
@@ -96,10 +93,10 @@ class FileManager:
         #Localiza as operacoes pertencentes ao processo
         ops = [op for op in self.operacoes if op['PID'] == processo['PID']]
         for op in ops:
-            #CODIGO PARA CRIACAO
+            #Para a criação do arquivo
             if op['opcode'] == 0:
                 self.cria_arquivo(op['arquivo'], op['tamanho'], processo['PID'])
-            #CODIGO PARA DELECAO
+            #Codigo para deletar o arquivo
             else:
                 # Seleciona o arquivo pra ser deletado
                 arquivo = next((arq for arq in self.arquivos if arq['nome'] == op['arquivo']), None)
@@ -116,13 +113,15 @@ class FileManager:
                     else:
                         self.log.append({
                             "status": 'Falha',
-                            "mensagem":'O processo {} nao pode deletar o arquivo {} (Erro de permissao)'.format(
+                            "mensagem":'O processo {} nao pode deletar o arquivo {} pois o codigo da operacao esta errado'.format(
                             processo['PID'], arquivo['nome'])
                         })
+                
                 else:
                     self.log.append({
                         "status": 'Falha',
                         "mensagem":'O processo {} nao pode deletar o arquivo {} (Arquivo Inexistente)'.format(
                         processo['PID'], op['arquivo'])
                     })
+                
             self.operacoes.remove(op)

@@ -11,7 +11,7 @@ Acima ocorre as importações dos arquivos que vão ser disparados no arquivo ma
 
 
 def main():
-    print('\tBem-vindo ao PSEUDO-SO 2020')
+    print('\tBem-vindo ao PSEUDO-SO 2021')
 
     # Nessa parte estamos inicializando os modulos
 

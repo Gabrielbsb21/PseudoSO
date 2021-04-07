@@ -5,10 +5,6 @@ from modules import memory_module as mm
 from modules import program_exit_module as pem
 import sys
 import operator
-'''
-Acima ocorre as importações dos arquivos que vão ser disparados no arquivo main.py
-'''
-
 
 def main():
     print('\tBem-vindo ao PSEUDO-SO 2021')
